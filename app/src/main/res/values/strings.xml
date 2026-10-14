@@ -1,0 +1,126 @@
+<resources>
+    <string name="app_name">PrivateClipboard</string>
+    <string name="xposed_description">剪贴板管控：按应用拦截、询问并统计剪贴板读写（仅作用于系统框架）</string>
+
+    <string name="nav_home">主页</string>
+    <string name="nav_settings">设置</string>
+
+    <string name="action_cancel">取消</string>
+    <string name="action_confirm">确定</string>
+    <string name="action_delete">删除</string>
+    <string name="action_save">保存</string>
+    <string name="action_more">更多</string>
+    <string name="action_clear_search">清除搜索</string>
+    <string name="action_deselect">取消选择</string>
+    <string name="action_select_all">全选</string>
+    <string name="selected_count">已选 %1$d 项</string>
+    <string name="seconds_value">%1$d 秒</string>
+
+    <!-- Categories / outcomes -->
+    <string name="category_auto_read">自动读取</string>
+    <string name="category_auto_write">自动写入</string>
+    <string name="category_manual_read">手动读取</string>
+    <string name="category_manual_write">手动写入</string>
+    <string name="outcome_allowed">放行</string>
+    <string name="outcome_blocked">已禁止</string>
+    <string name="outcome_ask_allowed">已同意</string>
+    <string name="outcome_ask_denied">已拒绝</string>
+
+    <!-- Theme -->
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+
+    <!-- Status -->
+    <string name="status_checking">正在检测</string>
+    <string name="status_active">保护中</string>
+    <string name="status_inactive">未激活</string>
+    <string name="status_inactive_message">请在 LSPosed 中启用本模块并勾选「系统框架」，然后重启设备。</string>
+
+    <!-- Home -->
+    <string name="apps_search_hint">搜索应用名或包名</string>
+    <string name="apps_scope_user">用户应用</string>
+    <string name="apps_scope_all">全部应用</string>
+    <string name="apps_empty_title">没有匹配的应用</string>
+    <string name="apps_empty_message">换个关键字，或切换到「全部应用」。</string>
+
+    <!-- Summaries -->
+    <string name="summary_block_read">禁止读取</string>
+    <string name="summary_block_write">禁止写入</string>
+    <string name="summary_guards">管控 %1$d 项</string>
+    <string name="summary_unrestricted">不受限制</string>
+
+    <!-- Batch -->
+    <string name="batch_title">批量操作</string>
+    <string name="batch_on">开启</string>
+    <string name="batch_off">关闭</string>
+    <string name="batch_group_template">模板</string>
+    <string name="batch_apply_template">应用模板</string>
+    <string name="batch_reset">重置配置</string>
+    <string name="batch_reset_title">重置所选应用？</string>
+    <string name="batch_reset_message">将清除 %1$d 个应用的全部管控与禁止规则。</string>
+    <string name="batch_done">已更新 %1$d 个应用</string>
+
+    <!-- App config -->
+    <string name="config_group_read">读取剪贴板</string>
+    <string name="config_group_write">写入剪贴板</string>
+    <string name="config_block_read">禁止读取</string>
+    <string name="config_block_read_description">直接拒绝该应用的所有读取，不弹窗</string>
+    <string name="config_block_write">禁止写入</string>
+    <string name="config_block_write_description">直接拒绝该应用的所有写入，不弹窗</string>
+    <string name="config_guard_auto_read">管控自动读取</string>
+    <string name="config_guard_auto_read_description">应用在后台或未经操作读取时弹窗询问</string>
+    <string name="config_guard_manual_read">管控手动读取</string>
+    <string name="config_guard_manual_read_description">应用在前台读取（如粘贴）时弹窗询问</string>
+    <string name="config_guard_auto_write">管控自动写入</string>
+    <string name="config_guard_auto_write_description">应用在后台或未经操作写入时弹窗询问</string>
+    <string name="config_guard_manual_write">管控手动写入</string>
+    <string name="config_guard_manual_write_description">应用在前台写入（如复制）时弹窗询问</string>
+    <string name="config_guard_overridden">已被「禁止」覆盖</string>
+    <string name="config_menu_apply_template">应用模板</string>
+    <string name="config_menu_reset">重置配置</string>
+    <string name="config_reset_title">重置配置？</string>
+    <string name="config_reset_message">该应用的全部管控与禁止规则将被清除。</string>
+
+    <!-- Usage -->
+    <string name="usage_title">访问统计</string>
+    <string name="usage_denied_count">已拦截 %1$d 次</string>
+    <string name="usage_events_empty">暂无记录</string>
+    <string name="usage_content_empty">（无文本内容）</string>
+
+    <!-- Templates -->
+    <string name="template_manage">模板管理</string>
+    <string name="template_new">新建模板</string>
+    <string name="template_name">模板名称</string>
+    <string name="template_rename">重命名</string>
+    <string name="template_pick_title">选择模板</string>
+    <string name="template_none">还没有模板</string>
+    <string name="template_none_message">新建一个模板，即可在应用列表中批量套用。</string>
+    <string name="template_detail_hint">修改模板不会影响已套用的应用；在主页长按多选后可批量套用。</string>
+    <string name="template_applied_one">已套用模板「%1$s」</string>
+    <string name="template_applied_many">已将「%1$s」套用到 %2$d 个应用</string>
+    <string name="template_delete_title">删除模板？</string>
+    <string name="template_delete_message">将删除 %1$d 个模板。</string>
+    <string name="template_deleted">已删除 %1$d 个模板</string>
+
+    <!-- Ask dialog -->
+    <string name="ask_package">包名：%1$s</string>
+    <string name="ask_operation">操作：%1$s剪贴板</string>
+    <string name="ask_preview_read">将被读取的内容</string>
+    <string name="ask_preview_write">将被写入的内容</string>
+    <string name="ask_preview_unavailable">（非文本内容或无法预览）</string>
+    <string name="ask_allow">同意</string>
+    <string name="ask_deny_countdown">拒绝（%1$d）</string>
+    <string name="ask_always_deny_read">始终禁止读取</string>
+    <string name="ask_always_deny_write">始终禁止写入</string>
+
+    <!-- Settings -->
+    <string name="settings_group_guard">管控</string>
+    <string name="settings_group_appearance">外观</string>
+    <string name="settings_ask_timeout">询问超时</string>
+    <string name="settings_ask_timeout_description">弹窗无响应超过该时长自动拒绝</string>
+    <string name="settings_templates_description">新建与编辑可批量套用的配置模板</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_dynamic_color">动态取色</string>
+    <string name="settings_dynamic_color_description">跟随壁纸生成配色</string>
+</resources>
