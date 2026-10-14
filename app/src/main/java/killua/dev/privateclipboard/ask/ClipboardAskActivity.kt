@@ -50,14 +50,13 @@ class ClipboardAskActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val initial = parse(intent) ?: return finish()
         request = initial
-        enableEdgeToEdge()
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = decide(allow = false)
         })
         setContent {
             val themeMode by settingsStore.state(AppSettings.themeMode).collectAsStateWithLifecycle()
             val dynamicColor by settingsStore.state(AppSettings.dynamicColor).collectAsStateWithLifecycle()
-            PrivateClipboardTheme(themeMode = themeMode, dynamicColor = dynamicColor) {
+            PrivateClipboardTheme(themeMode = themeMode, dynamicColor = dynamicColor, transparentBackground = true) {
                 request?.let { current ->
                     AskDialog(
                         request = current,

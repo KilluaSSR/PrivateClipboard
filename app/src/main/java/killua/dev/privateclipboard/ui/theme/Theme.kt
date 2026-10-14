@@ -12,6 +12,7 @@ import killua.dev.privateclipboard.data.ThemeMode
 fun PrivateClipboardTheme(
     themeMode: ThemeMode,
     dynamicColor: Boolean,
+    transparentBackground: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val seed = colorResource(R.color.brand_seed)
@@ -21,5 +22,5 @@ fun PrivateClipboardTheme(
         ThemeMode.Dark -> true
     }
     val source = if (dynamicColor) ColorSource.Wallpaper(fallbackSeed = seed) else ColorSource.Seed(seed = seed)
-    ArsenalTheme(colorSource = source, darkTheme = darkTheme, content = content)
+    ArsenalTheme(colorSource = source, darkTheme = darkTheme, content = content, transparentBackground = transparentBackground)
 }

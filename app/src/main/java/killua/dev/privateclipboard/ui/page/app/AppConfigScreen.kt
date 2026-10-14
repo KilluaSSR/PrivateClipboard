@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,6 +36,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -68,7 +72,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.md),
+            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
         ) {
             item(key = "header") {
                 AppHeader(packageName = state.packageName, label = state.label ?: state.packageName) {
@@ -126,19 +130,6 @@ private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Cat
                         horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                     ) {
                         Text(stringResource(category.labelRes()))
-                        Pill(
-                            text = usage.of(category).toString(),
-                            container = if (isSelected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainerHighest
-                            },
-                            content = if (isSelected) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
-                        )
                     }
                 },
             )
@@ -149,36 +140,44 @@ private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Cat
 @Composable
 private fun EventRow(event: AccessEvent, shape: Shape) {
     val context = LocalContext.current
+    val isDenied = event.outcome.isDenied
+
     Surface(shape = shape, color = ClipSurfaces.row, modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm + Spacing.xs),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        Row(
+            modifier = Modifier
+                .heightIn(min = 64.dp)
+                .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
-            Text(
-                text = event.content.ifEmpty { stringResource(R.string.usage_content_empty) },
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (event.content.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
+            Icon(
+                imageVector = if (isDenied) Icons.Outlined.Block else Icons.Outlined.CheckCircle,
+                contentDescription = null,
+                tint = if (isDenied) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.primary
+                },
             )
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Column(Modifier.weight(1f)) {
                 Text(
-                    context.formatDateTime(event.occurredAt),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-                Pill(
-                    text = stringResource(event.outcome.labelRes()),
-                    container = if (event.outcome.isDenied) {
-                        MaterialTheme.colorScheme.errorContainer
+                    text = event.content.ifEmpty { stringResource(R.string.usage_content_empty) },
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (event.content.isEmpty()) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
                     } else {
-                        MaterialTheme.colorScheme.secondaryContainer
+                        MaterialTheme.colorScheme.onSurface
                     },
-                    content = if (event.outcome.isDenied) {
-                        MaterialTheme.colorScheme.onErrorContainer
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = context.formatDateTime(event.occurredAt),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isDenied) {
+                        MaterialTheme.colorScheme.error
                     } else {
-                        MaterialTheme.colorScheme.onSecondaryContainer
+                        MaterialTheme.colorScheme.onSurfaceVariant
                     },
                 )
             }
