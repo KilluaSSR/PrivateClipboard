@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import killua.dev.arsenal.utils.packages.AppCatalog
 import killua.dev.privateclipboard.data.local.EventDao
 import killua.dev.privateclipboard.data.local.UsageDao
 import killua.dev.privateclipboard.data.local.UsageDatabase
@@ -15,10 +16,10 @@ import killua.dev.privateclipboard.data.repository.AppCatalogImpl
 import killua.dev.privateclipboard.data.repository.ClipConfigRepositoryImpl
 import killua.dev.privateclipboard.data.repository.TemplateRepositoryImpl
 import killua.dev.privateclipboard.data.repository.UsageRepositoryImpl
-import killua.dev.privateclipboard.domain.AppCatalog
 import killua.dev.privateclipboard.domain.ClipConfigRepository
 import killua.dev.privateclipboard.domain.TemplateRepository
 import killua.dev.privateclipboard.domain.UsageRepository
+import killua.dev.privateclipboard.domain.model.AppEntry
 import javax.inject.Singleton
 
 @Module
@@ -43,7 +44,7 @@ object AppProvidesModule {
 @InstallIn(SingletonComponent::class)
 abstract class AppBindsModule {
     @Binds
-    abstract fun appCatalog(impl: AppCatalogImpl): AppCatalog
+    abstract fun appCatalog(impl: AppCatalogImpl): AppCatalog<AppEntry>
 
     @Binds
     abstract fun clipConfigRepository(impl: ClipConfigRepositoryImpl): ClipConfigRepository

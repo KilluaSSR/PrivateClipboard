@@ -9,12 +9,6 @@ import killua.dev.privateclipboard.domain.model.UsageCounts
 import killua.dev.privateclipboard.shared.ClipShared.Category
 import kotlinx.coroutines.flow.Flow
 
-interface AppCatalog {
-    fun observeApps(): Flow<List<AppEntry>>
-
-    suspend fun refresh()
-}
-
 interface ClipConfigRepository {
     fun observeAll(): Flow<Map<String, ClipConfig>>
 

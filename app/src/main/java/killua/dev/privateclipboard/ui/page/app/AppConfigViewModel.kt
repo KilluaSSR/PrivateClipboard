@@ -11,12 +11,13 @@ import killua.dev.arsenal.core.mvvm.UiState
 import killua.dev.arsenal.core.overlay.OverlayController
 import killua.dev.arsenal.navigation.Navigator
 import killua.dev.arsenal.navigation.generated.GeneratedRoutes
+import killua.dev.arsenal.utils.packages.AppCatalog
 import killua.dev.privateclipboard.R
-import killua.dev.privateclipboard.domain.AppCatalog
 import killua.dev.privateclipboard.domain.ClipConfigRepository
 import killua.dev.privateclipboard.domain.TemplateRepository
 import killua.dev.privateclipboard.domain.UsageRepository
 import killua.dev.privateclipboard.domain.model.AccessEvent
+import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.ClipConfig
 import killua.dev.privateclipboard.domain.model.ClipTemplate
 import killua.dev.privateclipboard.domain.model.UsageCounts
@@ -64,7 +65,7 @@ class AppConfigViewModel @Inject constructor(
     templates: TemplateRepository,
     private val navigator: Navigator,
     private val overlay: OverlayController,
-    catalog: AppCatalog,
+    catalog: AppCatalog<AppEntry>,
 ) : BaseViewModel<AppConfigState, AppConfigIntent, AppConfigEffect>(
     AppConfigState(packageName = savedStateHandle.get<String>(ARG_PACKAGE).orEmpty()),
 ) {
@@ -78,7 +79,7 @@ class AppConfigViewModel @Inject constructor(
             .flatMapLatest { category -> usage.observeEvents(packageName, category, EVENT_LIMIT).map { category to it } }
             .launchInScope { (category, events) -> setState { copy(eventsCategory = category, events = events) } }
         templates.observeAll().launchInScope { setState { copy(templates = it) } }
-        catalog.observeApps().launchInScope { apps ->
+        catalog.apps.launchInScope { apps ->
             setState { copy(label = apps.firstOrNull { it.packageName == packageName }?.label) }
         }
     }

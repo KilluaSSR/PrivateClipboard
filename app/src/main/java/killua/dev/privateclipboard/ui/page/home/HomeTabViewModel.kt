@@ -10,8 +10,8 @@ import killua.dev.arsenal.core.mvvm.UiState
 import killua.dev.arsenal.core.overlay.OverlayController
 import killua.dev.arsenal.navigation.Navigator
 import killua.dev.arsenal.navigation.generated.GeneratedRoutes
+import killua.dev.arsenal.utils.packages.AppCatalog
 import killua.dev.privateclipboard.R
-import killua.dev.privateclipboard.domain.AppCatalog
 import killua.dev.privateclipboard.domain.ClipConfigRepository
 import killua.dev.privateclipboard.domain.TemplateRepository
 import killua.dev.privateclipboard.domain.model.AppEntry
@@ -66,7 +66,7 @@ sealed interface HomeEffect : UiEffect
 @HiltViewModel
 class HomeTabViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    catalog: AppCatalog,
+    catalog: AppCatalog<AppEntry>,
     private val configs: ClipConfigRepository,
     private val templates: TemplateRepository,
     private val navigator: Navigator,
@@ -75,7 +75,7 @@ class HomeTabViewModel @Inject constructor(
 ) : BaseViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
 
     init {
-        catalog.observeApps().launchInScope { setState { copy(apps = it) } }
+        catalog.apps.launchInScope { setState { copy(apps = it) } }
         templates.observeAll().launchInScope { setState { copy(templates = it) } }
         observeVisibleApps()
     }

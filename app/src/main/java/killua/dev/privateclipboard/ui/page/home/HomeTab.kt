@@ -9,8 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,19 +16,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Apps
-import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Deselect
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -40,13 +33,10 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,18 +44,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.components.application.AppRowContent
+import killua.dev.arsenal.material.components.application.AppSearchField
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.AppScope
-import killua.dev.privateclipboard.ui.components.AppIcon
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
 import killua.dev.privateclipboard.ui.components.EmptyView
@@ -172,36 +162,15 @@ private fun SelectionToolbar(
 @Composable
 private fun SearchField(onQueryChange: (String) -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
-    val fill = ClipSurfaces.row
-    TextField(
-        value = text,
-        onValueChange = {
+    AppSearchField(
+        query = text,
+        onQueryChange = {
             text = it
             onQueryChange(it)
         },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.md),
-        placeholder = { Text(stringResource(R.string.apps_search_hint)) },
-        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
-        trailingIcon = {
-            if (text.isNotEmpty()) {
-                IconButton(onClick = {
-                    text = ""
-                    onQueryChange("")
-                }) {
-                    Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.action_clear_search))
-                }
-            }
-        },
-        singleLine = true,
-        shape = CircleShape,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = fill,
-            unfocusedContainerColor = fill,
-            disabledContainerColor = fill,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
+        placeholder = stringResource(R.string.apps_search_hint),
+        clearContentDescription = stringResource(R.string.action_clear_search),
+        container = ClipSurfaces.row,
     )
 }
 
@@ -257,11 +226,17 @@ private fun AppList(
                 color = color,
                 modifier = Modifier.animateItem(),
             ) {
-                AppRow(
-                    app = app,
+                AppRowContent(
+                    packageName = app.packageName,
+                    label = app.label,
                     selected = isSelected,
                     onClick = { onClick(app.packageName) },
                     onLongClick = { onLongClick(app.packageName) },
+                    trailing = {
+                        if (app.config.isConfigured) {
+                            ConfigPill(app.config)
+                        }
+                    },
                 )
             }
         }
@@ -269,39 +244,3 @@ private fun AppList(
 }
 
 private val LIST_BOTTOM_CLEARANCE = 112.dp
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun AppRow(app: AppEntry, selected: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .heightIn(min = 72.dp)
-            .padding(horizontal = Spacing.md, vertical = Spacing.sm),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.md),
-    ) {
-        Box {
-            AppIcon(app.packageName)
-            if (selected) {
-                Icon(
-                    Icons.Rounded.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.BottomEnd).size(18.dp),
-                )
-            }
-        }
-        Column(Modifier.weight(1f)) {
-            Text(app.label, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-            Text(
-                text = app.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-            )
-        }
-        if (app.config.isConfigured) ConfigPill(app.config)
-    }
-}

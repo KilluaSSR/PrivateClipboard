@@ -1,10 +1,9 @@
 package killua.dev.privateclipboard.ui.page.app
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -41,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.components.application.AppHeader
+import killua.dev.arsenal.material.components.application.AppPill
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
@@ -50,12 +52,10 @@ import killua.dev.privateclipboard.domain.model.AccessEvent
 import killua.dev.privateclipboard.domain.model.UsageCounts
 import killua.dev.privateclipboard.shared.ClipShared.Category
 import killua.dev.privateclipboard.ui.components.AppDetailScaffold
-import killua.dev.privateclipboard.ui.components.AppHeader
 import killua.dev.privateclipboard.ui.components.ClipConfigEditor
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
 import killua.dev.privateclipboard.ui.components.GroupHeader
-import killua.dev.privateclipboard.ui.components.Pill
 import killua.dev.privateclipboard.ui.components.formatDateTime
 import killua.dev.privateclipboard.ui.components.labelRes
 
@@ -76,7 +76,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
         ) {
             item(key = "header") {
                 AppHeader(packageName = state.packageName, label = state.label ?: state.packageName) {
-                    Pill(
+                    AppPill(
                         text = stringResource(R.string.usage_denied_count, state.usage.denied),
                         container = MaterialTheme.colorScheme.tertiaryContainer,
                         content = MaterialTheme.colorScheme.onTertiaryContainer,
