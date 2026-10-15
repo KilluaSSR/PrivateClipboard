@@ -26,4 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PrivateClipboard"
 include(":app")
-includeBuild("../ArsenalDevKit")
+includeBuild("/Users/killuadev/Dev/Killua/ArsenalDevKit")

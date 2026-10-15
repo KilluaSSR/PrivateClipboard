@@ -60,12 +60,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.components.application.AppIcon
+import killua.dev.arsenal.material.components.application.AppSearchField
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.AppScope
-import killua.dev.privateclipboard.ui.components.AppIcon
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
 import killua.dev.privateclipboard.ui.components.EmptyView
@@ -172,36 +173,15 @@ private fun SelectionToolbar(
 @Composable
 private fun SearchField(onQueryChange: (String) -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
-    val fill = ClipSurfaces.row
-    TextField(
-        value = text,
-        onValueChange = {
+    AppSearchField(
+        query = text,
+        onQueryChange = {
             text = it
             onQueryChange(it)
         },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.md),
-        placeholder = { Text(stringResource(R.string.apps_search_hint)) },
-        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
-        trailingIcon = {
-            if (text.isNotEmpty()) {
-                IconButton(onClick = {
-                    text = ""
-                    onQueryChange("")
-                }) {
-                    Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.action_clear_search))
-                }
-            }
-        },
-        singleLine = true,
-        shape = CircleShape,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = fill,
-            unfocusedContainerColor = fill,
-            disabledContainerColor = fill,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
+        placeholder = stringResource(R.string.apps_search_hint),
+        clearContentDescription = stringResource(R.string.action_clear_search),
+        container = ClipSurfaces.row,
     )
 }
 

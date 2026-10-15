@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.components.application.AppHeader
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
@@ -50,7 +51,6 @@ import killua.dev.privateclipboard.domain.model.AccessEvent
 import killua.dev.privateclipboard.domain.model.UsageCounts
 import killua.dev.privateclipboard.shared.ClipShared.Category
 import killua.dev.privateclipboard.ui.components.AppDetailScaffold
-import killua.dev.privateclipboard.ui.components.AppHeader
 import killua.dev.privateclipboard.ui.components.ClipConfigEditor
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
