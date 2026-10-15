@@ -10,10 +10,8 @@ import killua.dev.privateclipboard.shared.ClipShared.Category
 
 @StringRes
 fun Category.labelRes(): Int = when (this) {
-    Category.AutoRead -> R.string.category_auto_read
-    Category.AutoWrite -> R.string.category_auto_write
-    Category.ManualRead -> R.string.category_manual_read
-    Category.ManualWrite -> R.string.category_manual_write
+    Category.Read -> R.string.category_read
+    Category.Write -> R.string.category_write
 }
 
 @StringRes

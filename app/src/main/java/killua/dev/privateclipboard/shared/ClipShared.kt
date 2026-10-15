@@ -3,46 +3,31 @@ package killua.dev.privateclipboard.shared
 object ClipShared {
 
     enum class Category(val storage: String) {
-        AutoRead("auto_read"),
-        AutoWrite("auto_write"),
-        ManualRead("manual_read"),
-        ManualWrite("manual_write");
+        Read("read"),
+        Write("write");
 
-        val isRead: Boolean get() = this == AutoRead || this == ManualRead
-        val isWrite: Boolean get() = !isRead
-        val isManual: Boolean get() = this == ManualRead || this == ManualWrite
+        val isRead: Boolean get() = this == Read
 
         companion object {
-            fun of(read: Boolean, manual: Boolean): Category = when {
-                read && manual -> ManualRead
-                read -> AutoRead
-                manual -> ManualWrite
-                else -> AutoWrite
-            }
+            fun of(read: Boolean): Category = if (read) Read else Write
 
-            fun fromStorage(value: String?): Category? = entries.firstOrNull { it.storage == value }
+            fun fromStorage(value: String?): Category? = when (value) {
+                "read", "manual_read", "auto_read" -> Read
+                "write", "manual_write", "auto_write" -> Write
+                else -> null
+            }
         }
     }
 
     object Keys {
-        const val GUARD_AUTO_READ = "guard_auto_read"
-        const val GUARD_AUTO_WRITE = "guard_auto_write"
-        const val GUARD_MANUAL_READ = "guard_manual_read"
-        const val GUARD_MANUAL_WRITE = "guard_manual_write"
+        const val GUARD_READ = "guard_manual_read"
+        const val GUARD_WRITE = "guard_manual_write"
         const val BLOCK_READ = "block_read"
         const val BLOCK_WRITE = "block_write"
 
-        fun guardKey(category: Category): String = when (category) {
-            Category.AutoRead -> GUARD_AUTO_READ
-            Category.AutoWrite -> GUARD_AUTO_WRITE
-            Category.ManualRead -> GUARD_MANUAL_READ
-            Category.ManualWrite -> GUARD_MANUAL_WRITE
-        }
+        fun guardKey(category: Category): String = if (category.isRead) GUARD_READ else GUARD_WRITE
 
-        val all: List<String> = listOf(
-            GUARD_AUTO_READ, GUARD_AUTO_WRITE, GUARD_MANUAL_READ, GUARD_MANUAL_WRITE,
-            BLOCK_READ, BLOCK_WRITE,
-        )
+        val all: List<String> = listOf(GUARD_READ, GUARD_WRITE, BLOCK_READ, BLOCK_WRITE)
     }
 
     const val GLOBAL_PREFS = "_global"

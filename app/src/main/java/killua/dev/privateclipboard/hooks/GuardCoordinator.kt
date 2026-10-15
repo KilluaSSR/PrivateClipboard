@@ -1,6 +1,5 @@
 package killua.dev.privateclipboard.hooks
 
-import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -71,18 +70,6 @@ internal object GuardCoordinator {
             Binder.restoreCallingIdentity(token)
         }
     }
-    fun isForeground(uid: Int): Boolean {
-        val ctx = systemContext() ?: return false
-        return runCatching {
-            asSystem {
-                val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                am.runningAppProcesses.orEmpty().any {
-                    it.uid == uid && it.importance <= ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                }
-            }
-        }.getOrDefault(false)
-    }
-
     fun record(pkg: String, category: ClipShared.Category, outcome: String, content: String) {
         val ctx = systemContext() ?: return
         runCatching {

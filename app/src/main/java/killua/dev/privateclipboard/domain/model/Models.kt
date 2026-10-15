@@ -2,43 +2,33 @@ package killua.dev.privateclipboard.domain.model
 
 import killua.dev.privateclipboard.shared.ClipShared
 import killua.dev.privateclipboard.shared.ClipShared.Category
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClipConfig(
-    val guardAutoRead: Boolean = false,
-    val guardAutoWrite: Boolean = false,
-    val guardManualRead: Boolean = false,
-    val guardManualWrite: Boolean = false,
+    @SerialName("guardManualRead") val guardRead: Boolean = false,
+    @SerialName("guardManualWrite") val guardWrite: Boolean = false,
     val blockRead: Boolean = false,
     val blockWrite: Boolean = false,
 ) {
     val isConfigured: Boolean get() = this != Default
 
-    fun guards(category: Category): Boolean = when (category) {
-        Category.AutoRead -> guardAutoRead
-        Category.AutoWrite -> guardAutoWrite
-        Category.ManualRead -> guardManualRead
-        Category.ManualWrite -> guardManualWrite
-    }
+    fun guards(category: Category): Boolean = if (category.isRead) guardRead else guardWrite
 
     fun isBlocked(category: Category): Boolean = if (category.isRead) blockRead else blockWrite
 
     fun valueOf(key: String): Boolean = when (key) {
-        ClipShared.Keys.GUARD_AUTO_READ -> guardAutoRead
-        ClipShared.Keys.GUARD_AUTO_WRITE -> guardAutoWrite
-        ClipShared.Keys.GUARD_MANUAL_READ -> guardManualRead
-        ClipShared.Keys.GUARD_MANUAL_WRITE -> guardManualWrite
+        ClipShared.Keys.GUARD_READ -> guardRead
+        ClipShared.Keys.GUARD_WRITE -> guardWrite
         ClipShared.Keys.BLOCK_READ -> blockRead
         ClipShared.Keys.BLOCK_WRITE -> blockWrite
         else -> false
     }
 
     fun with(key: String, value: Boolean): ClipConfig = when (key) {
-        ClipShared.Keys.GUARD_AUTO_READ -> copy(guardAutoRead = value)
-        ClipShared.Keys.GUARD_AUTO_WRITE -> copy(guardAutoWrite = value)
-        ClipShared.Keys.GUARD_MANUAL_READ -> copy(guardManualRead = value)
-        ClipShared.Keys.GUARD_MANUAL_WRITE -> copy(guardManualWrite = value)
+        ClipShared.Keys.GUARD_READ -> copy(guardRead = value)
+        ClipShared.Keys.GUARD_WRITE -> copy(guardWrite = value)
         ClipShared.Keys.BLOCK_READ -> copy(blockRead = value)
         ClipShared.Keys.BLOCK_WRITE -> copy(blockWrite = value)
         else -> this
@@ -47,12 +37,7 @@ data class ClipConfig(
     companion object {
         val Default = ClipConfig()
 
-        val GuardAll = ClipConfig(
-            guardAutoRead = true,
-            guardAutoWrite = true,
-            guardManualRead = true,
-            guardManualWrite = true,
-        )
+        val GuardAll = ClipConfig(guardRead = true, guardWrite = true)
 
         fun of(values: (String) -> Boolean): ClipConfig =
             ClipShared.Keys.all.fold(Default) { acc, key -> acc.with(key, values(key)) }
@@ -80,20 +65,11 @@ enum class Outcome(val storage: String) {
 }
 
 data class UsageCounts(
-    val autoRead: Long = 0,
-    val autoWrite: Long = 0,
-    val manualRead: Long = 0,
-    val manualWrite: Long = 0,
+    val read: Long = 0,
+    val write: Long = 0,
     val denied: Long = 0,
 ) {
-    val total: Long get() = autoRead + autoWrite + manualRead + manualWrite
-
-    fun of(category: Category): Long = when (category) {
-        Category.AutoRead -> autoRead
-        Category.AutoWrite -> autoWrite
-        Category.ManualRead -> manualRead
-        Category.ManualWrite -> manualWrite
-    }
+    fun of(category: Category): Long = if (category.isRead) read else write
 
     companion object {
         val Empty = UsageCounts()

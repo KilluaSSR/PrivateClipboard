@@ -8,12 +8,9 @@ import killua.dev.arsenal.core.mvvm.UiEffect
 import killua.dev.arsenal.core.mvvm.UiIntent
 import killua.dev.arsenal.core.mvvm.UiState
 import killua.dev.arsenal.core.overlay.OverlayController
-import killua.dev.arsenal.core.state.DataState
-import killua.dev.arsenal.data.settings.SettingsStore
 import killua.dev.arsenal.navigation.Navigator
 import killua.dev.arsenal.navigation.generated.GeneratedRoutes
 import killua.dev.privateclipboard.R
-import killua.dev.privateclipboard.data.AppSettings
 import killua.dev.privateclipboard.domain.AppCatalog
 import killua.dev.privateclipboard.domain.ClipConfigRepository
 import killua.dev.privateclipboard.domain.TemplateRepository
@@ -25,18 +22,24 @@ import killua.dev.privateclipboard.domain.model.ClipTemplate
 import killua.dev.privateclipboard.domain.usecase.FilterApps
 import killua.dev.privateclipboard.ui.components.BatchActionsSheet
 import killua.dev.privateclipboard.ui.components.TemplatePickerSheet
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import javax.inject.Inject
 
 data class HomeState(
-    val apps: DataState<List<AppEntry>> = DataState.Loading(),
+    val apps: List<AppEntry>? = null,
     val filter: AppFilter = AppFilter(),
+    /** Null until the first filter pass finishes. */
+    val visibleApps: List<AppEntry>? = null,
     val selected: Set<String> = emptySet(),
     val templates: List<ClipTemplate> = emptyList(),
 ) : UiState {
     val visiblePackages: List<String>
-        get() = (apps as? DataState.Success)?.data?.map { it.packageName }.orEmpty()
+        get() = visibleApps.orEmpty().map { it.packageName }
 
     val allSelected: Boolean
         get() = visiblePackages.isNotEmpty() && selected.containsAll(visiblePackages)
@@ -66,29 +69,32 @@ class HomeTabViewModel @Inject constructor(
     catalog: AppCatalog,
     private val configs: ClipConfigRepository,
     private val templates: TemplateRepository,
-    private val settings: SettingsStore,
     private val navigator: Navigator,
     private val overlay: OverlayController,
-    filterApps: FilterApps,
+    private val filterApps: FilterApps,
 ) : BaseViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
 
-    private val query = MutableStateFlow("")
-
     init {
-        val filters = combine(settings.flow(AppSettings.appsScope), query, ::AppFilter)
-        combine(catalog.observeApps(), filters) { apps, filter -> filter to filterApps(apps, filter) }
-            .launchInScope { (filter, apps) ->
-                setState {
-                    copy(filter = filter, apps = if (apps.isEmpty()) DataState.Empty() else DataState.Success(apps))
-                }
-            }
+        catalog.observeApps().launchInScope { setState { copy(apps = it) } }
         templates.observeAll().launchInScope { setState { copy(templates = it) } }
+        observeVisibleApps()
+    }
+
+    /** Re-filters off the main thread, and only when the source list or the filter actually changes. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeVisibleApps() {
+        uiState
+            .map { it.apps to it.filter }
+            .distinctUntilChanged()
+            .mapLatest { (apps, filter) -> apps?.let { filterApps(it, filter) } }
+            .flowOn(Dispatchers.Default)
+            .launchInScope { visible -> if (visible != null) setState { copy(visibleApps = visible) } }
     }
 
     override suspend fun handleIntent(intent: HomeIntent) {
         when (intent) {
-            is HomeIntent.Search -> query.value = intent.query
-            is HomeIntent.SetScope -> settings.set(AppSettings.appsScope, intent.scope)
+            is HomeIntent.Search -> setState { copy(filter = filter.copy(query = intent.query)) }
+            is HomeIntent.SetScope -> setState { copy(filter = filter.copy(scope = intent.scope)) }
             is HomeIntent.Open -> navigator.navigate(GeneratedRoutes.appConfigScreen(intent.packageName))
             is HomeIntent.ToggleSelect -> setState {
                 copy(selected = if (intent.packageName in selected) selected - intent.packageName else selected + intent.packageName)
@@ -153,10 +159,8 @@ class HomeTabViewModel @Inject constructor(
                     dismiss()
                     dispatch(HomeIntent.BatchSet(key, value))
                 },
-                onApplyTemplate = {
-                    dismiss()
-                    dispatch(HomeIntent.BatchPickTemplate)
-                },
+                // Swap the content in place: dismissing first would let the hide animation clear the picker.
+                onApplyTemplate = { dispatch(HomeIntent.BatchPickTemplate) },
                 onReset = {
                     dismiss()
                     dispatch(HomeIntent.BatchReset)

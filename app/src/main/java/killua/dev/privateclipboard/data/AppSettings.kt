@@ -3,7 +3,6 @@ package killua.dev.privateclipboard.data
 import killua.dev.arsenal.data.settings.boolSetting
 import killua.dev.arsenal.data.settings.enumSetting
 import killua.dev.arsenal.data.settings.jsonSetting
-import killua.dev.privateclipboard.domain.model.AppScope
 import killua.dev.privateclipboard.domain.model.ClipTemplate
 
 enum class ThemeMode { System, Light, Dark }
@@ -15,7 +14,7 @@ object AppSettings {
     val dynamicColor = boolSetting("dynamic_color", default = true)
 
     val askTimeout = enumSetting("ask_timeout", AskTimeout.Ten)
+    val excludeImeStats = boolSetting("exclude_ime_stats", default = true)
 
-    val appsScope = enumSetting("apps_scope", AppScope.UserOnly)
     val templates = jsonSetting<List<ClipTemplate>>("templates", default = emptyList())
 }

@@ -17,10 +17,8 @@
     <string name="seconds_value">%1$d 秒</string>
 
     <!-- Categories / outcomes -->
-    <string name="category_auto_read">自动读取</string>
-    <string name="category_auto_write">自动写入</string>
-    <string name="category_manual_read">手动读取</string>
-    <string name="category_manual_write">手动写入</string>
+    <string name="category_read">读剪贴板</string>
+    <string name="category_write">写剪贴板</string>
     <string name="outcome_allowed">放行</string>
     <string name="outcome_blocked">已禁止</string>
     <string name="outcome_ask_allowed">已同意</string>
@@ -34,6 +32,8 @@
     <!-- Status -->
     <string name="status_checking">正在检测</string>
     <string name="status_active">保护中</string>
+    <string name="status_outdated">需要重启</string>
+    <string name="status_outdated_message">系统框架中仍在运行旧版 Hook，管控规则可能不生效。重启设备后生效。</string>
     <string name="status_inactive">未激活</string>
     <string name="status_inactive_message">请在 LSPosed 中启用本模块并勾选「系统框架」，然后重启设备。</string>
 
@@ -47,7 +47,8 @@
     <!-- Summaries -->
     <string name="summary_block_read">禁止读取</string>
     <string name="summary_block_write">禁止写入</string>
-    <string name="summary_guards">管控 %1$d 项</string>
+    <string name="summary_guard_read">管控读</string>
+    <string name="summary_guard_write">管控写</string>
     <string name="summary_unrestricted">不受限制</string>
 
     <!-- Batch -->
@@ -68,14 +69,10 @@
     <string name="config_block_read_description">直接拒绝该应用的所有读取，不弹窗</string>
     <string name="config_block_write">禁止写入</string>
     <string name="config_block_write_description">直接拒绝该应用的所有写入，不弹窗</string>
-    <string name="config_guard_auto_read">管控自动读取</string>
-    <string name="config_guard_auto_read_description">应用在后台或未经操作读取时弹窗询问</string>
-    <string name="config_guard_manual_read">管控手动读取</string>
-    <string name="config_guard_manual_read_description">应用在前台读取（如粘贴）时弹窗询问</string>
-    <string name="config_guard_auto_write">管控自动写入</string>
-    <string name="config_guard_auto_write_description">应用在后台或未经操作写入时弹窗询问</string>
-    <string name="config_guard_manual_write">管控手动写入</string>
-    <string name="config_guard_manual_write_description">应用在前台写入（如复制）时弹窗询问</string>
+    <string name="config_guard_read">管控读剪贴板</string>
+    <string name="config_guard_read_description">应用读取剪贴板时弹窗询问</string>
+    <string name="config_guard_write">管控写剪贴板</string>
+    <string name="config_guard_write_description">应用写入剪贴板时弹窗询问</string>
     <string name="config_guard_overridden">已被「禁止」覆盖</string>
     <string name="config_menu_apply_template">应用模板</string>
     <string name="config_menu_reset">重置配置</string>
@@ -119,6 +116,8 @@
     <string name="settings_group_appearance">外观</string>
     <string name="settings_ask_timeout">询问超时</string>
     <string name="settings_ask_timeout_description">弹窗无响应超过该时长自动拒绝</string>
+    <string name="settings_exclude_ime">过滤输入法统计</string>
+    <string name="settings_exclude_ime_description">已启用输入法读写剪贴板的次数不计入统计</string>
     <string name="settings_templates_description">新建与编辑可批量套用的配置模板</string>
     <string name="settings_theme">主题</string>
     <string name="settings_dynamic_color">动态取色</string>

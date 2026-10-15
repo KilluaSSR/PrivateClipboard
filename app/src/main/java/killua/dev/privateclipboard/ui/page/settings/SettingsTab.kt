@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dashboard
+import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.Wallpaper
@@ -76,13 +77,27 @@ class AskTimeoutSettingEntry @Inject constructor(@ApplicationContext private val
 }
 
 @SpiImpl
+class ExcludeImeSettingEntry @Inject constructor(@ApplicationContext private val context: Context) : SettingsEntry {
+    override val screen = SETTINGS_SCREEN
+    override val group: String = context.getString(R.string.settings_group_guard)
+    override val order = 1
+    override fun model() = SettingsItemModel.Switch(
+        definition = AppSettings.excludeImeStats,
+        title = context.getString(R.string.settings_exclude_ime),
+        description = context.getString(R.string.settings_exclude_ime_description),
+        icon = Icons.Rounded.Keyboard,
+        accent = SettingsAccent.Primary,
+    )
+}
+
+@SpiImpl
 class TemplatesSettingEntry @Inject constructor(
     @ApplicationContext private val context: Context,
     private val navigator: Navigator,
 ) : SettingsEntry {
     override val screen = SETTINGS_SCREEN
     override val group: String = context.getString(R.string.settings_group_guard)
-    override val order = 1
+    override val order = 2
     override fun model() = SettingsItemModel.Navigation(
         title = context.getString(R.string.template_manage),
         description = context.getString(R.string.settings_templates_description),

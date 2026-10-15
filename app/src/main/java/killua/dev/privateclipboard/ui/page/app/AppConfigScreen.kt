@@ -119,7 +119,7 @@ private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Cat
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
     ) {
-        listOf(Category.AutoRead, Category.ManualRead, Category.AutoWrite, Category.ManualWrite).forEach { category ->
+        Category.entries.forEach { category ->
             val isSelected = category == selected
             FilterChip(
                 selected = isSelected,

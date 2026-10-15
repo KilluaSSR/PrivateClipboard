@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.GppBad
+import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,17 +42,26 @@ import killua.dev.arsenal.material.templates.settings.SettingsItemRenderer
 import killua.dev.arsenal.material.templates.settings.SettingsItemStyle
 import killua.dev.arsenal.spi.annotation.SpiImpl
 import killua.dev.privateclipboard.R
+import killua.dev.privateclipboard.data.AppSettings
 import killua.dev.privateclipboard.data.HookProbe
+import killua.dev.privateclipboard.data.HookStatus
+import killua.dev.privateclipboard.data.InputMethods
 import killua.dev.privateclipboard.domain.UsageRepository
 import killua.dev.privateclipboard.domain.model.UsageCounts
 import killua.dev.privateclipboard.shared.ClipShared.Category
 import killua.dev.privateclipboard.ui.components.labelRes
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 internal const val STATUS_BANNER_STYLE = "status_banner"
 
 data class StatusBannerState(
-    val active: Boolean? = null,
+    /** Null while probing. */
+    val status: HookStatus? = null,
     val totals: UsageCounts = UsageCounts.Empty,
 ) : UiState
 
@@ -61,19 +71,30 @@ sealed interface StatusBannerIntent : UiIntent {
 
 sealed interface StatusBannerEffect : UiEffect
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class StatusBannerViewModel @Inject constructor(
     private val probe: HookProbe,
+    private val inputMethods: InputMethods,
     usage: UsageRepository,
+    settings: SettingsStore,
 ) : BaseViewModel<StatusBannerState, StatusBannerIntent, StatusBannerEffect>(StatusBannerState()) {
 
+    private val imePackages = MutableStateFlow(inputMethods.enabledPackages())
+
     init {
-        usage.observeTotals().launchInScope { setState { copy(totals = it) } }
+        combine(settings.flow(AppSettings.excludeImeStats), imePackages) { exclude, imes -> if (exclude) imes else emptySet() }
+            .distinctUntilChanged()
+            .flatMapLatest { usage.observeTotals(it) }
+            .launchInScope { setState { copy(totals = it) } }
     }
 
     override suspend fun handleIntent(intent: StatusBannerIntent) {
         when (intent) {
-            StatusBannerIntent.Probe -> setState { copy(active = probe.isHookActive()) }
+            StatusBannerIntent.Probe -> {
+                imePackages.value = inputMethods.enabledPackages()
+                setState { copy(status = probe.status()) }
+            }
         }
     }
 }
@@ -96,17 +117,19 @@ class StatusBannerRenderer @Inject constructor() : SettingsItemRenderer {
 private fun StatusBanner(state: StatusBannerState) {
     val scheme = MaterialTheme.colorScheme
     val container by animateColorAsState(
-        when (state.active) {
-            true -> scheme.primaryContainer
-            false -> scheme.errorContainer
+        when (state.status) {
+            HookStatus.Active -> scheme.primaryContainer
+            HookStatus.Outdated -> scheme.tertiaryContainer
+            HookStatus.Inactive -> scheme.errorContainer
             null -> scheme.surfaceContainerHighest
         },
         label = "bannerContainer",
     )
     val content by animateColorAsState(
-        when (state.active) {
-            true -> scheme.onPrimaryContainer
-            false -> scheme.onErrorContainer
+        when (state.status) {
+            HookStatus.Active -> scheme.onPrimaryContainer
+            HookStatus.Outdated -> scheme.onTertiaryContainer
+            HookStatus.Inactive -> scheme.onErrorContainer
             null -> scheme.onSurface
         },
         label = "bannerContent",
@@ -117,23 +140,28 @@ private fun StatusBanner(state: StatusBannerState) {
         color = container,
         contentColor = content,
     ) {
-        AnimatedContent(targetState = state.active, label = "bannerBody") { active ->
+        AnimatedContent(targetState = state.status, label = "bannerBody") { status ->
             Column(modifier = Modifier.padding(Spacing.lg), verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
-                    if (active == null) {
+                    if (status == null) {
                         ArsenalLoadingIndicator(modifier = Modifier.size(32.dp), color = content)
                     } else {
                         Icon(
-                            if (active) Icons.Rounded.Shield else Icons.Rounded.GppBad,
+                            when (status) {
+                                HookStatus.Active -> Icons.Rounded.Shield
+                                HookStatus.Outdated -> Icons.Rounded.RestartAlt
+                                HookStatus.Inactive -> Icons.Rounded.GppBad
+                            },
                             contentDescription = null,
                             modifier = Modifier.size(32.dp),
                         )
                     }
                     Text(
                         stringResource(
-                            when (active) {
-                                true -> R.string.status_active
-                                false -> R.string.status_inactive
+                            when (status) {
+                                HookStatus.Active -> R.string.status_active
+                                HookStatus.Outdated -> R.string.status_outdated
+                                HookStatus.Inactive -> R.string.status_inactive
                                 null -> R.string.status_checking
                             }
                         ),
@@ -141,9 +169,10 @@ private fun StatusBanner(state: StatusBannerState) {
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                when (active) {
-                    true -> StatsRows(state.totals)
-                    false -> Text(stringResource(R.string.status_inactive_message), style = MaterialTheme.typography.bodyMedium)
+                when (status) {
+                    HookStatus.Active -> StatsRows(state.totals)
+                    HookStatus.Outdated -> Text(stringResource(R.string.status_outdated_message), style = MaterialTheme.typography.bodyMedium)
+                    HookStatus.Inactive -> Text(stringResource(R.string.status_inactive_message), style = MaterialTheme.typography.bodyMedium)
                     null -> Unit
                 }
             }
@@ -153,16 +182,8 @@ private fun StatusBanner(state: StatusBannerState) {
 
 @Composable
 private fun StatsRows(totals: UsageCounts) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
-        listOf(
-            Category.AutoRead to Category.ManualRead,
-            Category.AutoWrite to Category.ManualWrite,
-        ).forEach { (left, right) ->
-            Row(Modifier.fillMaxWidth()) {
-                Stat(left, totals.of(left), Modifier.weight(1f))
-                Stat(right, totals.of(right), Modifier.weight(1f))
-            }
-        }
+    Row(Modifier.fillMaxWidth()) {
+        Category.entries.forEach { Stat(it, totals.of(it), Modifier.weight(1f)) }
     }
 }
 

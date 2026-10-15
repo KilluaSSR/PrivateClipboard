@@ -59,7 +59,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import killua.dev.arsenal.core.state.DataState
 import killua.dev.arsenal.material.Spacing
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
@@ -72,6 +71,7 @@ import killua.dev.privateclipboard.ui.components.ConfigPill
 import killua.dev.privateclipboard.ui.components.EmptyView
 import killua.dev.privateclipboard.ui.components.LoadingView
 import killua.dev.privateclipboard.ui.components.TabScaffold
+import killua.dev.privateclipboard.ui.components.stateItem
 
 @Composable
 fun HomeTab() {
@@ -86,21 +86,18 @@ fun HomeTab() {
             Column(Modifier.fillMaxSize()) {
                 SearchField(onQueryChange = { viewModel.dispatch(HomeIntent.Search(it)) })
                 ScopeChips(state.filter.scope) { viewModel.dispatch(HomeIntent.SetScope(it)) }
-                when (val apps = state.apps) {
-                    is DataState.Success -> AppList(
-                        apps = apps.data,
+                val apps = state.visibleApps
+                if (apps == null) {
+                    LoadingView()
+                } else {
+                    AppList(
+                        apps = apps,
                         selected = state.selected,
                         onClick = { pkg ->
                             viewModel.dispatch(if (selecting) HomeIntent.ToggleSelect(pkg) else HomeIntent.Open(pkg))
                         },
                         onLongClick = { viewModel.dispatch(HomeIntent.ToggleSelect(it)) },
                     )
-                    is DataState.Empty -> EmptyView(
-                        icon = Icons.Rounded.Apps,
-                        title = stringResource(R.string.apps_empty_title),
-                        message = stringResource(R.string.apps_empty_message),
-                    )
-                    else -> LoadingView()
                 }
             }
 
@@ -239,6 +236,16 @@ private fun AppList(
         contentPadding = PaddingValues(start = Spacing.md, end = Spacing.md, bottom = LIST_BOTTOM_CLEARANCE),
         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
     ) {
+        if (apps.isEmpty()) {
+            stateItem { fill ->
+                EmptyView(
+                    icon = Icons.Rounded.Apps,
+                    title = stringResource(R.string.apps_empty_title),
+                    message = stringResource(R.string.apps_empty_message),
+                    modifier = fill.animateItem(),
+                )
+            }
+        }
         itemsIndexed(apps, key = { _, app -> app.packageName }) { index, app ->
             val isSelected = app.packageName in selected
             val color by animateColorAsState(

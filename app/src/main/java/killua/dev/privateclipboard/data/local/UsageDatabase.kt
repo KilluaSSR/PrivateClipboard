@@ -16,19 +16,12 @@ import kotlinx.coroutines.flow.Flow
 @Entity(tableName = "usage")
 data class UsageEntity(
     @PrimaryKey val packageName: String,
-    @ColumnInfo(defaultValue = "0") val autoRead: Long = 0,
-    @ColumnInfo(defaultValue = "0") val autoWrite: Long = 0,
-    @ColumnInfo(defaultValue = "0") val manualRead: Long = 0,
-    @ColumnInfo(defaultValue = "0") val manualWrite: Long = 0,
+    @ColumnInfo(defaultValue = "0") val read: Long = 0,
+    @ColumnInfo(defaultValue = "0") val write: Long = 0,
     @ColumnInfo(defaultValue = "0") val denied: Long = 0,
 )
 
-data class UsageTotals(
-    val autoRead: Long?,
-    val autoWrite: Long?,
-    val manualRead: Long?,
-    val manualWrite: Long?,
-)
+data class UsageTotals(val read: Long?, val write: Long?)
 
 @Entity(tableName = "events", indices = [Index("packageName", "category", "occurredAt")])
 data class EventEntity(
@@ -43,8 +36,8 @@ data class EventEntity(
 @Dao
 abstract class UsageDao : BaseDao<UsageEntity> {
 
-    @Query("SELECT SUM(autoRead) AS autoRead, SUM(autoWrite) AS autoWrite, SUM(manualRead) AS manualRead, SUM(manualWrite) AS manualWrite FROM usage")
-    abstract fun observeTotals(): Flow<UsageTotals>
+    @Query("SELECT SUM(`read`) AS `read`, SUM(`write`) AS `write` FROM usage WHERE packageName NOT IN (:excluded)")
+    abstract fun observeTotals(excluded: Collection<String>): Flow<UsageTotals>
 
     @Query("SELECT * FROM usage WHERE packageName = :packageName")
     abstract fun observe(packageName: String): Flow<UsageEntity?>
@@ -53,36 +46,15 @@ abstract class UsageDao : BaseDao<UsageEntity> {
     protected abstract suspend fun ensure(packageName: String)
 
     @Query(
-        """
-        UPDATE usage SET
-            autoRead = autoRead + :autoRead,
-            autoWrite = autoWrite + :autoWrite,
-            manualRead = manualRead + :manualRead,
-            manualWrite = manualWrite + :manualWrite,
-            denied = denied + :denied
-        WHERE packageName = :packageName
-        """
+        "UPDATE usage SET `read` = `read` + :read, `write` = `write` + :write, denied = denied + :denied " +
+            "WHERE packageName = :packageName"
     )
-    protected abstract suspend fun bump(
-        packageName: String,
-        autoRead: Int,
-        autoWrite: Int,
-        manualRead: Int,
-        manualWrite: Int,
-        denied: Int,
-    )
+    protected abstract suspend fun bump(packageName: String, read: Int, write: Int, denied: Int)
 
     @Transaction
-    open suspend fun increment(
-        packageName: String,
-        autoRead: Int = 0,
-        autoWrite: Int = 0,
-        manualRead: Int = 0,
-        manualWrite: Int = 0,
-        denied: Int = 0,
-    ) {
+    open suspend fun increment(packageName: String, read: Int, write: Int, denied: Int) {
         ensure(packageName)
-        bump(packageName, autoRead, autoWrite, manualRead, manualWrite, denied)
+        bump(packageName, read, write, denied)
     }
 }
 
@@ -99,7 +71,7 @@ abstract class EventDao : BaseDao<EventEntity> {
     abstract suspend fun trim(keep: Int)
 }
 
-@Database(entities = [UsageEntity::class, EventEntity::class], version = 3, exportSchema = false)
+@Database(entities = [UsageEntity::class, EventEntity::class], version = 4, exportSchema = false)
 abstract class UsageDatabase : RoomDatabase() {
     abstract fun usage(): UsageDao
 

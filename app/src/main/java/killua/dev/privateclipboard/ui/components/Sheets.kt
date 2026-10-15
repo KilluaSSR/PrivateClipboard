@@ -33,7 +33,6 @@ import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.ClipConfig
 import killua.dev.privateclipboard.domain.model.ClipTemplate
-import killua.dev.privateclipboard.shared.ClipShared.Category
 import killua.dev.privateclipboard.shared.ClipShared.Keys
 
 @Composable
@@ -51,8 +50,8 @@ fun configSummary(config: ClipConfig): String {
     val parts = buildList {
         if (config.blockRead) add(stringResource(R.string.summary_block_read))
         if (config.blockWrite) add(stringResource(R.string.summary_block_write))
-        val guards = Category.entries.count { config.guards(it) && !config.isBlocked(it) }
-        if (guards > 0) add(stringResource(R.string.summary_guards, guards))
+        if (config.guardRead && !config.blockRead) add(stringResource(R.string.summary_guard_read))
+        if (config.guardWrite && !config.blockWrite) add(stringResource(R.string.summary_guard_write))
     }
     return if (parts.isEmpty()) stringResource(R.string.summary_unrestricted) else parts.joinToString(" · ")
 }
@@ -136,10 +135,8 @@ fun BatchActionsSheet(
     val rows = listOf(
         Keys.BLOCK_READ to R.string.config_block_read,
         Keys.BLOCK_WRITE to R.string.config_block_write,
-        Keys.GUARD_AUTO_READ to R.string.config_guard_auto_read,
-        Keys.GUARD_MANUAL_READ to R.string.config_guard_manual_read,
-        Keys.GUARD_AUTO_WRITE to R.string.config_guard_auto_write,
-        Keys.GUARD_MANUAL_WRITE to R.string.config_guard_manual_write,
+        Keys.GUARD_READ to R.string.config_guard_read,
+        Keys.GUARD_WRITE to R.string.config_guard_write,
     )
     LazyColumn(
         modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg),

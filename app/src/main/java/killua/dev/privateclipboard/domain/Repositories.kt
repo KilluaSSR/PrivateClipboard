@@ -40,7 +40,7 @@ interface TemplateRepository {
 }
 
 interface UsageRepository {
-    fun observeTotals(): Flow<UsageCounts>
+    fun observeTotals(excluded: Collection<String>): Flow<UsageCounts>
 
     fun observe(packageName: String): Flow<UsageCounts>
 

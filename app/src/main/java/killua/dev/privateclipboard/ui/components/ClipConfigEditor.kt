@@ -6,8 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.EditNote
-import androidx.compose.material.icons.rounded.SmartToy
-import androidx.compose.material.icons.rounded.TouchApp
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,7 +18,7 @@ import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.ClipConfig
 import killua.dev.privateclipboard.shared.ClipShared.Keys
 
-private data class GuardRow(val key: String, val title: Int, val description: Int, val icon: ImageVector)
+private data class GuardRow(val key: String, val title: Int, val description: Int)
 
 @Composable
 fun ClipConfigEditor(
@@ -34,10 +33,7 @@ fun ClipConfigEditor(
             blockTitle = R.string.config_block_read,
             blockDescription = R.string.config_block_read_description,
             blockIcon = Icons.Rounded.ContentPaste,
-            guards = listOf(
-                GuardRow(Keys.GUARD_AUTO_READ, R.string.config_guard_auto_read, R.string.config_guard_auto_read_description, Icons.Rounded.SmartToy),
-                GuardRow(Keys.GUARD_MANUAL_READ, R.string.config_guard_manual_read, R.string.config_guard_manual_read_description, Icons.Rounded.TouchApp),
-            ),
+            guard = GuardRow(Keys.GUARD_READ, R.string.config_guard_read, R.string.config_guard_read_description),
             config = config,
             onChange = onChange,
         )
@@ -47,10 +43,7 @@ fun ClipConfigEditor(
             blockTitle = R.string.config_block_write,
             blockDescription = R.string.config_block_write_description,
             blockIcon = Icons.Rounded.EditNote,
-            guards = listOf(
-                GuardRow(Keys.GUARD_AUTO_WRITE, R.string.config_guard_auto_write, R.string.config_guard_auto_write_description, Icons.Rounded.SmartToy),
-                GuardRow(Keys.GUARD_MANUAL_WRITE, R.string.config_guard_manual_write, R.string.config_guard_manual_write_description, Icons.Rounded.TouchApp),
-            ),
+            guard = GuardRow(Keys.GUARD_WRITE, R.string.config_guard_write, R.string.config_guard_write_description),
             config = config,
             onChange = onChange,
         )
@@ -64,7 +57,7 @@ private fun DirectionGroup(
     blockTitle: Int,
     blockDescription: Int,
     blockIcon: ImageVector,
-    guards: List<GuardRow>,
+    guard: GuardRow,
     config: ClipConfig,
     onChange: (String, Boolean) -> Unit,
 ) {
@@ -82,21 +75,19 @@ private fun DirectionGroup(
                 containerColor = slot.color,
             )
         }
-        guards.forEach { guard ->
-            add { slot ->
-                val checked = config.valueOf(guard.key)
-                SettingsSwitch(
-                    title = stringResource(guard.title),
-                    description = stringResource(if (blocked) R.string.config_guard_overridden else guard.description),
-                    checked = checked,
-                    enabled = !blocked,
-                    onCheckedChange = { onChange(guard.key, it) },
-                    leadingIcon = guard.icon,
-                    leadingAccent = if (checked && !blocked) SettingsAccent.Primary else SettingsAccent.Neutral,
-                    shape = slot.shape,
-                    containerColor = slot.color,
-                )
-            }
+        add { slot ->
+            val checked = config.valueOf(guard.key)
+            SettingsSwitch(
+                title = stringResource(guard.title),
+                description = stringResource(if (blocked) R.string.config_guard_overridden else guard.description),
+                checked = checked,
+                enabled = !blocked,
+                onCheckedChange = { onChange(guard.key, it) },
+                leadingIcon = Icons.Rounded.Shield,
+                leadingAccent = if (checked && !blocked) SettingsAccent.Primary else SettingsAccent.Neutral,
+                shape = slot.shape,
+                containerColor = slot.color,
+            )
         }
     }
     RowGroup(rows = rows, title = title)

@@ -72,8 +72,7 @@ internal object ClipboardGuardHook {
         }
 
         val p = prefs(pkg)
-        val manual = GuardCoordinator.isForeground(uid)
-        val category = ClipShared.Category.of(read = read, manual = manual)
+        val category = ClipShared.Category.of(read)
         val subject = if (read) currentClip(hook.instance, uid) else clip
         val content = previewOf(subject)
 

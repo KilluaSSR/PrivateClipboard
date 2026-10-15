@@ -33,7 +33,7 @@ data class AppConfigState(
     val label: String? = null,
     val config: ClipConfig = ClipConfig.Default,
     val usage: UsageCounts = UsageCounts.Empty,
-    val category: Category = Category.AutoRead,
+    val category: Category = Category.Read,
     val eventsCategory: Category? = null,
     val events: List<AccessEvent> = emptyList(),
     val templates: List<ClipTemplate> = emptyList(),

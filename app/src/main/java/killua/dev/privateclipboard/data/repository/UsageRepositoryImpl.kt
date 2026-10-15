@@ -25,23 +25,16 @@ class UsageRepositoryImpl @Inject constructor(
     private val events: EventDao,
 ) : UsageRepository {
 
-    override fun observeTotals(): Flow<UsageCounts> =
-        usage.observeTotals()
-            .map {
-                UsageCounts(
-                    autoRead = it.autoRead ?: 0,
-                    autoWrite = it.autoWrite ?: 0,
-                    manualRead = it.manualRead ?: 0,
-                    manualWrite = it.manualWrite ?: 0,
-                )
-            }
+    override fun observeTotals(excluded: Collection<String>): Flow<UsageCounts> =
+        usage.observeTotals(excluded)
+            .map { UsageCounts(read = it.read ?: 0, write = it.write ?: 0) }
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
 
     override fun observe(packageName: String): Flow<UsageCounts> =
         usage.observe(packageName)
             .map { entity ->
-                entity?.run { UsageCounts(autoRead, autoWrite, manualRead, manualWrite, denied) } ?: UsageCounts.Empty
+                entity?.run { UsageCounts(read, write, denied) } ?: UsageCounts.Empty
             }
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
@@ -61,10 +54,8 @@ class UsageRepositoryImpl @Inject constructor(
         database.withTransaction {
             usage.increment(
                 packageName = packageName,
-                autoRead = if (category == Category.AutoRead) 1 else 0,
-                autoWrite = if (category == Category.AutoWrite) 1 else 0,
-                manualRead = if (category == Category.ManualRead) 1 else 0,
-                manualWrite = if (category == Category.ManualWrite) 1 else 0,
+                read = if (category.isRead) 1 else 0,
+                write = if (category.isRead) 0 else 1,
                 denied = if (outcome.isDenied) 1 else 0,
             )
             events.insert(
