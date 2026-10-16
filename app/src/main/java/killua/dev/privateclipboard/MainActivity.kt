@@ -17,9 +17,10 @@ import killua.dev.arsenal.navigation.NavigationCommandHandler
 import killua.dev.arsenal.navigation.Navigator
 import killua.dev.arsenal.navigation.generated.GeneratedRoutes
 import killua.dev.arsenal.navigation.generated.arsenalGeneratedDestinations
+import killua.dev.privateclipboard.data.AppSettings
 import killua.dev.privateclipboard.ui.theme.PrivateClipboardTheme
 import javax.inject.Inject
-import killua.dev.privateclipboard.data.AppSettings
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

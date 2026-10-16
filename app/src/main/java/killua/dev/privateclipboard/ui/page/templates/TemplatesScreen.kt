@@ -32,6 +32,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.core.state.DataState
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.templates.basics.EmptyView
+import killua.dev.arsenal.material.templates.basics.LoadingView
+import killua.dev.arsenal.material.templates.basics.stateItem
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
 import killua.dev.arsenal.material.templates.settings.SettingsItem
@@ -42,10 +45,7 @@ import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.ui.components.ClipConfigEditor
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.DetailScaffold
-import killua.dev.privateclipboard.ui.components.EmptyView
-import killua.dev.privateclipboard.ui.components.LoadingView
 import killua.dev.privateclipboard.ui.components.configSummary
-import killua.dev.privateclipboard.ui.components.stateItem
 
 @NavDestination(route = "templates")
 @Composable

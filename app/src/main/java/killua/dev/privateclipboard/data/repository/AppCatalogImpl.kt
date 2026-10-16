@@ -9,7 +9,6 @@ import killua.dev.privateclipboard.domain.ClipConfigRepository
 import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.ClipConfig
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 import javax.inject.Singleton

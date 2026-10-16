@@ -1,7 +1,6 @@
 package killua.dev.privateclipboard.domain
 
 import killua.dev.privateclipboard.domain.model.AccessEvent
-import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.ClipConfig
 import killua.dev.privateclipboard.domain.model.ClipTemplate
 import killua.dev.privateclipboard.domain.model.Outcome
