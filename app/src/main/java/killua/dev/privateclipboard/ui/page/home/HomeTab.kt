@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Apps
 import androidx.compose.material.icons.rounded.Close
@@ -38,10 +39,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -50,7 +50,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import killua.dev.arsenal.material.Spacing
 import killua.dev.arsenal.material.components.application.AppRowContent
-import killua.dev.arsenal.material.components.application.AppSearchField
+import killua.dev.arsenal.material.components.application.ArsenalSearchBar
+import killua.dev.arsenal.material.components.application.SearchExpansionMode
+import killua.dev.arsenal.material.templates.basics.EmptyView
+import killua.dev.arsenal.material.templates.basics.LoadingView
+import killua.dev.arsenal.material.templates.basics.stateItem
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.privateclipboard.R
@@ -58,10 +62,7 @@ import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.AppScope
 import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
-import killua.dev.privateclipboard.ui.components.EmptyView
-import killua.dev.privateclipboard.ui.components.LoadingView
 import killua.dev.privateclipboard.ui.components.TabScaffold
-import killua.dev.privateclipboard.ui.components.stateItem
 
 @Composable
 fun HomeTab() {
@@ -160,17 +161,24 @@ private fun SelectionToolbar(
 }
 
 @Composable
-private fun SearchField(onQueryChange: (String) -> Unit) {
-    var text by rememberSaveable { mutableStateOf("") }
-    AppSearchField(
-        query = text,
-        onQueryChange = {
-            text = it
-            onQueryChange(it)
-        },
+private fun SearchField(
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val textFieldState = rememberTextFieldState()
+
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text.toString() }
+            .collect { onQueryChange(it) }
+    }
+
+    ArsenalSearchBar(
+        textFieldState = textFieldState,
+        modifier = modifier,
+        expansionMode = SearchExpansionMode.Inline,
         placeholder = stringResource(R.string.apps_search_hint),
         clearContentDescription = stringResource(R.string.action_clear_search),
-        container = ClipSurfaces.row,
+        inlineContainerColor = ClipSurfaces.row,
     )
 }
 

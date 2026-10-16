@@ -17,8 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,9 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import killua.dev.arsenal.core.overlay.SimpleMenuItem
+import killua.dev.arsenal.core.overlay.SimpleMenuMode
 import killua.dev.arsenal.material.Spacing
 import killua.dev.arsenal.material.components.application.AppHeader
 import killua.dev.arsenal.material.components.application.AppPill
+import killua.dev.arsenal.material.components.menu.rememberSimpleMenuLauncher
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
@@ -187,24 +190,27 @@ private fun EventRow(event: AccessEvent, shape: Shape) {
 
 @Composable
 private fun OverflowMenu(onIntent: (AppConfigIntent) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Rounded.MoreVert, contentDescription = stringResource(R.string.action_more))
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            listOf(
-                R.string.config_menu_apply_template to AppConfigIntent.PickTemplate,
-                R.string.config_menu_reset to AppConfigIntent.Reset,
-            ).forEach { (label, intent) ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(label)) },
-                    onClick = {
-                        expanded = false
-                        onIntent(intent)
+    val launcher = rememberSimpleMenuLauncher()
+    var anchor by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    val actions = listOf(
+        Triple("apply_template", stringResource(R.string.config_menu_apply_template), AppConfigIntent.PickTemplate),
+        Triple("reset", stringResource(R.string.config_menu_reset), AppConfigIntent.Reset),
+    )
+    IconButton(
+        onClick = {
+            anchor?.let { coordinates ->
+                launcher.show(
+                    items = actions.map { (id, label, _) -> SimpleMenuItem(id = id, label = label) },
+                    anchor = coordinates,
+                    mode = SimpleMenuMode.Navigation,
+                    onItemClick = { id ->
+                        actions.firstOrNull { it.first == id }?.let { onIntent(it.third) }
                     },
                 )
             }
-        }
+        },
+        modifier = Modifier.onGloballyPositioned { anchor = it },
+    ) {
+        Icon(Icons.Rounded.MoreVert, contentDescription = stringResource(R.string.action_more))
     }
 }

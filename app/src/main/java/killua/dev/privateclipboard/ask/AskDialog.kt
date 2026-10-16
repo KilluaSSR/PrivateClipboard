@@ -51,11 +51,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.components.application.AppIcon
+import killua.dev.arsenal.material.components.application.rememberAppLabel
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.ui.components.labelRes
 import kotlin.math.ceil
-import killua.dev.arsenal.material.components.application.AppIcon
-import killua.dev.arsenal.material.components.application.rememberAppLabel
 
 private val CardShape = RoundedCornerShape(28.dp)
 private val OuterCorner = 16.dp

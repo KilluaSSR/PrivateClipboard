@@ -3,7 +3,6 @@ package killua.dev.privateclipboard.ui.components
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import killua.dev.arsenal.material.components.application.AppPill
 import killua.dev.privateclipboard.domain.model.ClipConfig
 
