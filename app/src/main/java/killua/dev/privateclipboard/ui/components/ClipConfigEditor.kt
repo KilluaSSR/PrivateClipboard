@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
+import killua.dev.arsenal.material.templates.basics.ArsenalRowGroup
+import killua.dev.arsenal.material.templates.basics.ArsenalRowSlot
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
 import killua.dev.arsenal.material.templates.settings.SettingsSwitch
 import killua.dev.privateclipboard.R
@@ -26,7 +28,7 @@ fun ClipConfigEditor(
     onChange: (key: String, value: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md)) {
         DirectionGroup(
             title = stringResource(R.string.config_group_read),
             blockKey = Keys.BLOCK_READ,
@@ -62,7 +64,7 @@ private fun DirectionGroup(
     onChange: (String, Boolean) -> Unit,
 ) {
     val blocked = config.valueOf(blockKey)
-    val rows = buildList<@Composable (RowSlot) -> Unit> {
+    val rows = buildList<@Composable (ArsenalRowSlot) -> Unit> {
         add { slot ->
             SettingsSwitch(
                 title = stringResource(blockTitle),
@@ -90,5 +92,5 @@ private fun DirectionGroup(
             )
         }
     }
-    RowGroup(rows = rows, title = title)
+    ArsenalRowGroup(rows = rows, title = title)
 }

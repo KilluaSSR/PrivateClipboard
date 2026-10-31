@@ -15,9 +15,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import killua.dev.arsenal.core.gate.Gate
 import killua.dev.arsenal.data.settings.SettingsStore
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
+import killua.dev.arsenal.material.templates.scaffolds.ArsenalTabScaffold
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.ArsenalSettingsScreen
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
@@ -30,10 +32,7 @@ import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.data.AppSettings
 import killua.dev.privateclipboard.data.AskTimeout
 import killua.dev.privateclipboard.data.ThemeMode
-import killua.dev.privateclipboard.ui.components.ClipSurfaces
-import killua.dev.privateclipboard.ui.components.TabScaffold
 import killua.dev.privateclipboard.ui.components.labelRes
-import javax.inject.Inject
 
 internal const val SETTINGS_SCREEN = "settings"
 
@@ -43,12 +42,12 @@ class SettingsViewModel @Inject constructor(val store: SettingsStore) : ViewMode
 @Composable
 fun SettingsTab() {
     val viewModel: SettingsViewModel = hiltViewModel()
-    TabScaffold(title = stringResource(R.string.nav_settings)) { padding ->
+    ArsenalTabScaffold(title = stringResource(R.string.nav_settings)) { padding ->
         ArsenalSettingsScreen(
             screen = SETTINGS_SCREEN,
             store = viewModel.store,
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            itemContainerColor = ClipSurfaces.row,
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
+            itemContainerColor = ArsenalTokens.colors.surfaceBright,
         )
     }
 }

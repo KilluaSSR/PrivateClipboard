@@ -25,7 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
 import killua.dev.arsenal.material.templates.settings.SettingsItem
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
@@ -37,7 +37,7 @@ import killua.dev.privateclipboard.shared.ClipShared.Keys
 
 @Composable
 private fun SheetTitle(title: String, subtitle: String? = null) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.extraSmall)) {
+    Column(verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
         Text(title, style = MaterialTheme.typography.titleLarge)
         if (subtitle != null) {
             Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -63,8 +63,8 @@ fun TemplatePickerSheet(
     onManage: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg).padding(bottom = Spacing.sm),
-        verticalArrangement = Arrangement.spacedBy(Spacing.md),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.lg).padding(bottom = ArsenalTokens.spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md),
     ) {
         SheetTitle(stringResource(R.string.template_pick_title))
         if (templates.isEmpty()) {
@@ -74,7 +74,7 @@ fun TemplatePickerSheet(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
                 itemsIndexed(templates, key = { _, it -> it.id }) { index, template ->
                     SettingsItem(
                         title = template.name,
@@ -104,8 +104,8 @@ fun NameInputSheet(
 ) {
     var name by rememberSaveable { mutableStateOf(initial) }
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg).padding(bottom = Spacing.sm),
-        verticalArrangement = Arrangement.spacedBy(Spacing.md),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.lg).padding(bottom = ArsenalTokens.spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md),
     ) {
         SheetTitle(title)
         OutlinedTextField(
@@ -115,7 +115,7 @@ fun NameInputSheet(
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm), modifier = Modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm), modifier = Modifier.fillMaxWidth()) {
             TextButton(onClick = onCancel, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_cancel)) }
             Button(onClick = { onConfirm(name) }, enabled = name.isNotBlank(), modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.action_save))
@@ -139,17 +139,17 @@ fun BatchActionsSheet(
         Keys.GUARD_WRITE to R.string.config_guard_write,
     )
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg),
-        verticalArrangement = Arrangement.spacedBy(Spacing.md),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md),
     ) {
         item { SheetTitle(stringResource(R.string.batch_title), stringResource(R.string.selected_count, selectedCount)) }
         rows.forEach { (key, label) ->
             item(key = key) { BatchToggleRow(stringResource(label), onOn = { onSet(key, true) }, onOff = { onSet(key, false) }) }
         }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
                 Text(stringResource(R.string.batch_group_template), style = MaterialTheme.typography.titleSmall)
-                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm)) {
                     FilledTonalButton(
                         onClick = onApplyTemplate,
                         modifier = Modifier.weight(1f),
@@ -175,9 +175,9 @@ fun BatchActionsSheet(
 
 @Composable
 private fun BatchToggleRow(label: String, onOn: () -> Unit, onOff: () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+    Column(verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
         Text(label, style = MaterialTheme.typography.titleSmall)
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm)) {
             FilledTonalButton(
                 onClick = onOn,
                 modifier = Modifier.weight(1f),

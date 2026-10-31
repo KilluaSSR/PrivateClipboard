@@ -34,7 +34,7 @@ import killua.dev.arsenal.core.mvvm.UiEffect
 import killua.dev.arsenal.core.mvvm.UiIntent
 import killua.dev.arsenal.core.mvvm.UiState
 import killua.dev.arsenal.data.settings.SettingsStore
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.loadingindicator.ArsenalLoadingIndicator
 import killua.dev.arsenal.material.templates.settings.ItemPosition
 import killua.dev.arsenal.material.templates.settings.SettingsItemModel
@@ -141,8 +141,8 @@ private fun StatusBanner(state: StatusBannerState) {
         contentColor = content,
     ) {
         AnimatedContent(targetState = state.status, label = "bannerBody") { status ->
-            Column(modifier = Modifier.padding(Spacing.lg), verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+            Column(modifier = Modifier.padding(ArsenalTokens.spacing.lg), verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md)) {
                     if (status == null) {
                         ArsenalLoadingIndicator(modifier = Modifier.size(32.dp), color = content)
                     } else {

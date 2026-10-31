@@ -31,10 +31,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.core.state.DataState
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.templates.basics.EmptyView
 import killua.dev.arsenal.material.templates.basics.LoadingView
 import killua.dev.arsenal.material.templates.basics.stateItem
+import killua.dev.arsenal.material.templates.scaffolds.ArsenalDetailScaffold
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
 import killua.dev.arsenal.material.templates.settings.SettingsItem
@@ -43,8 +44,6 @@ import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.arsenal.navigation.annotation.NavDestination
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.ui.components.ClipConfigEditor
-import killua.dev.privateclipboard.ui.components.ClipSurfaces
-import killua.dev.privateclipboard.ui.components.DetailScaffold
 import killua.dev.privateclipboard.ui.components.configSummary
 
 @NavDestination(route = "templates")
@@ -56,7 +55,7 @@ fun TemplatesScreen() {
 
     BackHandler(selecting) { viewModel.dispatch(TemplatesIntent.ClearSelection) }
 
-    DetailScaffold(
+    ArsenalDetailScaffold(
         title = if (selecting) {
             stringResource(R.string.selected_count, state.selected.size)
         } else {
@@ -87,14 +86,14 @@ fun TemplatesScreen() {
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
         ) {
             when (val templates = state.templates) {
                 is DataState.Success -> itemsIndexed(templates.data, key = { _, it -> it.id }) { index, template ->
                     val isSelected = template.id in state.selected
                     val color by animateColorAsState(
-                        if (isSelected) MaterialTheme.colorScheme.secondaryContainer else ClipSurfaces.row,
+                        if (isSelected) MaterialTheme.colorScheme.secondaryContainer else ArsenalTokens.colors.surfaceBright,
                         label = "templateRow",
                     )
                     SettingsItem(
@@ -134,7 +133,7 @@ fun TemplateDetailScreen(backStackEntry: NavBackStackEntry) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val template = state.template
 
-    DetailScaffold(
+    ArsenalDetailScaffold(
         title = template?.name.orEmpty(),
         subtitle = template?.let { configSummary(it.config) },
         onBack = { viewModel.dispatch(TemplateDetailIntent.Back) },
@@ -146,7 +145,7 @@ fun TemplateDetailScreen(backStackEntry: NavBackStackEntry) {
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
         ) {
             if (template == null) {
                 stateItem { modifier -> LoadingView(modifier) }
@@ -162,7 +161,7 @@ fun TemplateDetailScreen(backStackEntry: NavBackStackEntry) {
                         text = stringResource(R.string.template_detail_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = Spacing.md),
+                        modifier = Modifier.padding(horizontal = ArsenalTokens.spacing.sm, vertical = ArsenalTokens.spacing.md),
                     )
                 }
             }

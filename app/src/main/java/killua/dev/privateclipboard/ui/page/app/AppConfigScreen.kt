@@ -42,10 +42,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.core.overlay.SimpleMenuItem
 import killua.dev.arsenal.core.overlay.SimpleMenuMode
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.application.AppHeader
 import killua.dev.arsenal.material.components.application.AppPill
 import killua.dev.arsenal.material.components.menu.rememberSimpleMenuLauncher
+import killua.dev.arsenal.material.templates.basics.ArsenalGroupHeader
+import killua.dev.arsenal.material.templates.scaffolds.ArsenalAppDetailScaffold
 import killua.dev.arsenal.material.templates.scaffolds.plus
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
@@ -54,11 +56,8 @@ import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.AccessEvent
 import killua.dev.privateclipboard.domain.model.UsageCounts
 import killua.dev.privateclipboard.shared.ClipShared.Category
-import killua.dev.privateclipboard.ui.components.AppDetailScaffold
 import killua.dev.privateclipboard.ui.components.ClipConfigEditor
-import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
-import killua.dev.privateclipboard.ui.components.GroupHeader
 import killua.dev.privateclipboard.ui.components.formatDateTime
 import killua.dev.privateclipboard.ui.components.labelRes
 
@@ -68,14 +67,14 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
     val viewModel: AppConfigViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    AppDetailScaffold(
+    ArsenalAppDetailScaffold(
         onBack = { viewModel.dispatch(AppConfigIntent.Back) },
         actions = { OverflowMenu(viewModel::dispatch) },
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
         ) {
             item(key = "header") {
                 AppHeader(packageName = state.packageName, label = state.label ?: state.packageName) {
@@ -93,7 +92,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
                     onChange = { key, value -> viewModel.dispatch(AppConfigIntent.SetKey(key, value)) },
                 )
             }
-            item(key = "usage_header") { GroupHeader(title = stringResource(R.string.usage_title)) }
+            item(key = "usage_header") { ArsenalGroupHeader(title = stringResource(R.string.usage_title)) }
             item(key = "usage_chips") {
                 CategoryChips(state.usage, state.category) { viewModel.dispatch(AppConfigIntent.SelectCategory(it)) }
             }
@@ -105,7 +104,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
                         stringResource(R.string.usage_events_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth().padding(Spacing.md),
+                        modifier = Modifier.fillMaxWidth().padding(ArsenalTokens.spacing.md),
                     )
                 }
                 else -> itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
@@ -120,7 +119,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
 private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Category) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
     ) {
         Category.entries.forEach { category ->
             val isSelected = category == selected
@@ -130,7 +129,7 @@ private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Cat
                 label = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
                     ) {
                         Text(stringResource(category.labelRes()))
                     }
@@ -145,13 +144,13 @@ private fun EventRow(event: AccessEvent, shape: Shape) {
     val context = LocalContext.current
     val isDenied = event.outcome.isDenied
 
-    Surface(shape = shape, color = ClipSurfaces.row, modifier = Modifier.fillMaxWidth()) {
+    Surface(shape = shape, color = ArsenalTokens.colors.surfaceBright, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .heightIn(min = 64.dp)
-                .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
+                .padding(horizontal = ArsenalTokens.spacing.lg, vertical = ArsenalTokens.spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md),
         ) {
             Icon(
                 imageVector = if (isDenied) Icons.Outlined.Block else Icons.Outlined.CheckCircle,

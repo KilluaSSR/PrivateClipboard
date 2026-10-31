@@ -48,21 +48,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.application.AppRowContent
 import killua.dev.arsenal.material.components.application.ArsenalSearchBar
 import killua.dev.arsenal.material.components.application.SearchExpansionMode
 import killua.dev.arsenal.material.templates.basics.EmptyView
 import killua.dev.arsenal.material.templates.basics.LoadingView
 import killua.dev.arsenal.material.templates.basics.stateItem
+import killua.dev.arsenal.material.templates.scaffolds.ArsenalTabScaffold
 import killua.dev.arsenal.material.templates.settings.groupedItemShape
 import killua.dev.arsenal.material.templates.settings.itemPosition
 import killua.dev.privateclipboard.R
 import killua.dev.privateclipboard.domain.model.AppEntry
 import killua.dev.privateclipboard.domain.model.AppScope
-import killua.dev.privateclipboard.ui.components.ClipSurfaces
 import killua.dev.privateclipboard.ui.components.ConfigPill
-import killua.dev.privateclipboard.ui.components.TabScaffold
 
 @Composable
 fun HomeTab() {
@@ -72,7 +71,7 @@ fun HomeTab() {
 
     BackHandler(selecting) { viewModel.dispatch(HomeIntent.ClearSelection) }
 
-    TabScaffold(title = stringResource(R.string.app_name)) { padding ->
+    ArsenalTabScaffold(title = stringResource(R.string.app_name)) { padding ->
         Box(Modifier.fillMaxSize().padding(top = padding.calculateTopPadding())) {
             Column(Modifier.fillMaxSize()) {
                 SearchField(onQueryChange = { viewModel.dispatch(HomeIntent.Search(it)) })
@@ -122,14 +121,14 @@ private fun SelectionToolbar(
     onOpenBatch: () -> Unit,
 ) {
     HorizontalFloatingToolbar(
-        modifier = Modifier.padding(bottom = Spacing.md),
+        modifier = Modifier.padding(bottom = ArsenalTokens.spacing.md),
         expanded = true,
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-            modifier = Modifier.wrapContentWidth().padding(horizontal = Spacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
+            modifier = Modifier.wrapContentWidth().padding(horizontal = ArsenalTokens.spacing.xs),
         ) {
             FilledIconButton(
                 onClick = onExit,
@@ -147,7 +146,7 @@ private fun SelectionToolbar(
             Text(
                 stringResource(R.string.selected_count, selectedCount),
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(horizontal = Spacing.xs),
+                modifier = Modifier.padding(horizontal = ArsenalTokens.spacing.xs),
             )
             FilledTonalButton(
                 onClick = onOpenBatch,
@@ -178,15 +177,15 @@ private fun SearchField(
         expansionMode = SearchExpansionMode.Inline,
         placeholder = stringResource(R.string.apps_search_hint),
         clearContentDescription = stringResource(R.string.action_clear_search),
-        inlineContainerColor = ClipSurfaces.row,
+        inlineContainerColor = ArsenalTokens.colors.surfaceBright,
     )
 }
 
 @Composable
 private fun ScopeChips(scope: AppScope, onSelect: (AppScope) -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.md, vertical = Spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.md, vertical = ArsenalTokens.spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
     ) {
         FilterChip(
             selected = scope == AppScope.UserOnly,
@@ -210,8 +209,8 @@ private fun AppList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = Spacing.md, end = Spacing.md, bottom = LIST_BOTTOM_CLEARANCE),
-        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        contentPadding = PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = LIST_BOTTOM_CLEARANCE),
+        verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
     ) {
         if (apps.isEmpty()) {
             stateItem { fill ->
@@ -226,7 +225,7 @@ private fun AppList(
         itemsIndexed(apps, key = { _, app -> app.packageName }) { index, app ->
             val isSelected = app.packageName in selected
             val color by animateColorAsState(
-                if (isSelected) MaterialTheme.colorScheme.secondaryContainer else ClipSurfaces.row,
+                if (isSelected) MaterialTheme.colorScheme.secondaryContainer else ArsenalTokens.colors.surfaceBright,
                 label = "rowColor",
             )
             Surface(
