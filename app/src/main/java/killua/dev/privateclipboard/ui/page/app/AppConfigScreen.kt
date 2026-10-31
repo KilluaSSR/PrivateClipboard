@@ -42,7 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.core.overlay.SimpleMenuItem
 import killua.dev.arsenal.core.overlay.SimpleMenuMode
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.application.AppHeader
 import killua.dev.arsenal.material.components.application.AppPill
 import killua.dev.arsenal.material.components.menu.rememberSimpleMenuLauncher
@@ -74,8 +74,8 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
         ) {
             item(key = "header") {
                 AppHeader(packageName = state.packageName, label = state.label ?: state.packageName) {
@@ -105,7 +105,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
                         stringResource(R.string.usage_events_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth().padding(Spacing.md),
+                        modifier = Modifier.fillMaxWidth().padding(ArsenalTokens.spacing.md),
                     )
                 }
                 else -> itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
@@ -120,7 +120,7 @@ fun AppConfigScreen(backStackEntry: NavBackStackEntry) {
 private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Category) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
     ) {
         Category.entries.forEach { category ->
             val isSelected = category == selected
@@ -130,7 +130,7 @@ private fun CategoryChips(usage: UsageCounts, selected: Category, onSelect: (Cat
                 label = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
                     ) {
                         Text(stringResource(category.labelRes()))
                     }
@@ -149,9 +149,9 @@ private fun EventRow(event: AccessEvent, shape: Shape) {
         Row(
             modifier = Modifier
                 .heightIn(min = 64.dp)
-                .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
+                .padding(horizontal = ArsenalTokens.spacing.lg, vertical = ArsenalTokens.spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md),
         ) {
             Icon(
                 imageVector = if (isDenied) Icons.Outlined.Block else Icons.Outlined.CheckCircle,

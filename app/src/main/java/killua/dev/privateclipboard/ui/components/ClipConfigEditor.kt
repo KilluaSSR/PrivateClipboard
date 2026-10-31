@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.templates.settings.SettingsAccent
 import killua.dev.arsenal.material.templates.settings.SettingsSwitch
 import killua.dev.privateclipboard.R
@@ -26,7 +26,7 @@ fun ClipConfigEditor(
     onChange: (key: String, value: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.md)) {
         DirectionGroup(
             title = stringResource(R.string.config_group_read),
             blockKey = Keys.BLOCK_READ,

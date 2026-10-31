@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import killua.dev.arsenal.core.state.DataState
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.templates.basics.EmptyView
 import killua.dev.arsenal.material.templates.basics.LoadingView
 import killua.dev.arsenal.material.templates.basics.stateItem
@@ -87,8 +87,8 @@ fun TemplatesScreen() {
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
         ) {
             when (val templates = state.templates) {
                 is DataState.Success -> itemsIndexed(templates.data, key = { _, it -> it.id }) { index, template ->
@@ -146,7 +146,7 @@ fun TemplateDetailScreen(backStackEntry: NavBackStackEntry) {
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = padding + PaddingValues(start = Spacing.md, end = Spacing.md, bottom = Spacing.lg),
+            contentPadding = padding + PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = ArsenalTokens.spacing.lg),
         ) {
             if (template == null) {
                 stateItem { modifier -> LoadingView(modifier) }
@@ -162,7 +162,7 @@ fun TemplateDetailScreen(backStackEntry: NavBackStackEntry) {
                         text = stringResource(R.string.template_detail_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = Spacing.md),
+                        modifier = Modifier.padding(horizontal = ArsenalTokens.spacing.sm, vertical = ArsenalTokens.spacing.md),
                     )
                 }
             }

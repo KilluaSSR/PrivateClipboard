@@ -50,7 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.application.AppIcon
 import killua.dev.arsenal.material.components.application.rememberAppLabel
 import killua.dev.privateclipboard.R
@@ -77,7 +77,7 @@ fun AskDialog(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.45f))
             .safeDrawingPadding()
-            .padding(Spacing.lg),
+            .padding(ArsenalTokens.spacing.lg),
         contentAlignment = Alignment.Center,
     ) {
         AnimatedVisibility(visible = shown, enter = fadeIn() + scaleIn(initialScale = 0.92f)) {
@@ -113,12 +113,12 @@ private fun AskCard(
         tonalElevation = 6.dp,
     ) {
         Column(
-            modifier = Modifier.padding(start = Spacing.md, end = Spacing.md, top = Spacing.lg, bottom = Spacing.md),
+            modifier = Modifier.padding(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, top = ArsenalTokens.spacing.lg, bottom = ArsenalTokens.spacing.md),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AppIcon(request.packageName, size = 64.dp)
-            Spacer(Modifier.height(Spacing.sm))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+            Spacer(Modifier.height(ArsenalTokens.spacing.sm))
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm)) {
                 Text(
                     text = label,
                     style = MaterialTheme.typography.titleLarge,
@@ -131,29 +131,29 @@ private fun AskCard(
                         imageVector = if (isRead) Icons.Rounded.ContentPaste else Icons.Rounded.EditNote,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(Spacing.xs).size(16.dp),
+                        modifier = Modifier.padding(ArsenalTokens.spacing.xs).size(16.dp),
                     )
                 }
             }
-            Spacer(Modifier.height(Spacing.sm))
+            Spacer(Modifier.height(ArsenalTokens.spacing.sm))
             InfoLine(stringResource(R.string.ask_package, request.packageName))
             InfoLine(stringResource(R.string.ask_operation, stringResource(request.category.labelRes())))
 
-            Spacer(Modifier.height(Spacing.md))
+            Spacer(Modifier.height(ArsenalTokens.spacing.md))
             PreviewBox(
                 title = stringResource(if (isRead) R.string.ask_preview_read else R.string.ask_preview_write),
                 text = request.preview,
             )
 
-            Spacer(Modifier.height(Spacing.md))
+            Spacer(Modifier.height(ArsenalTokens.spacing.md))
             LinearProgressIndicator(
                 progress = { progress.value },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.sm),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.sm),
                 drawStopIndicator = {},
             )
-            Spacer(Modifier.height(Spacing.md))
+            Spacer(Modifier.height(ArsenalTokens.spacing.md))
 
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+            Column(verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
                 ActionButton(
                     text = stringResource(R.string.ask_allow),
                     shape = RoundedCornerShape(topStart = OuterCorner, topEnd = OuterCorner, bottomStart = InnerCorner, bottomEnd = InnerCorner),
@@ -161,7 +161,7 @@ private fun AskCard(
                     onClick = onAllow,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
                     ActionButton(
                         text = stringResource(R.string.ask_deny_countdown, secondsLeft),
                         shape = RoundedCornerShape(topStart = InnerCorner, topEnd = InnerCorner, bottomStart = OuterCorner, bottomEnd = InnerCorner),
@@ -200,7 +200,7 @@ private fun PreviewBox(title: String, text: String) {
         shape = RoundedCornerShape(OuterCorner),
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
     ) {
-        Column(modifier = Modifier.padding(Spacing.md), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+        Column(modifier = Modifier.padding(ArsenalTokens.spacing.md), verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs)) {
             Text(title, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             Text(
                 text = text.ifBlank { stringResource(R.string.ask_preview_unavailable) },

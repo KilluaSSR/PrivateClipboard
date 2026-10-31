@@ -48,7 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import killua.dev.arsenal.material.Spacing
+import killua.dev.arsenal.material.ArsenalTokens
 import killua.dev.arsenal.material.components.application.AppRowContent
 import killua.dev.arsenal.material.components.application.ArsenalSearchBar
 import killua.dev.arsenal.material.components.application.SearchExpansionMode
@@ -122,14 +122,14 @@ private fun SelectionToolbar(
     onOpenBatch: () -> Unit,
 ) {
     HorizontalFloatingToolbar(
-        modifier = Modifier.padding(bottom = Spacing.md),
+        modifier = Modifier.padding(bottom = ArsenalTokens.spacing.md),
         expanded = true,
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-            modifier = Modifier.wrapContentWidth().padding(horizontal = Spacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
+            modifier = Modifier.wrapContentWidth().padding(horizontal = ArsenalTokens.spacing.xs),
         ) {
             FilledIconButton(
                 onClick = onExit,
@@ -147,7 +147,7 @@ private fun SelectionToolbar(
             Text(
                 stringResource(R.string.selected_count, selectedCount),
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(horizontal = Spacing.xs),
+                modifier = Modifier.padding(horizontal = ArsenalTokens.spacing.xs),
             )
             FilledTonalButton(
                 onClick = onOpenBatch,
@@ -185,8 +185,8 @@ private fun SearchField(
 @Composable
 private fun ScopeChips(scope: AppScope, onSelect: (AppScope) -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.md, vertical = Spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = ArsenalTokens.spacing.md, vertical = ArsenalTokens.spacing.sm),
+        horizontalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.sm),
     ) {
         FilterChip(
             selected = scope == AppScope.UserOnly,
@@ -210,8 +210,8 @@ private fun AppList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = Spacing.md, end = Spacing.md, bottom = LIST_BOTTOM_CLEARANCE),
-        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        contentPadding = PaddingValues(start = ArsenalTokens.spacing.md, end = ArsenalTokens.spacing.md, bottom = LIST_BOTTOM_CLEARANCE),
+        verticalArrangement = Arrangement.spacedBy(ArsenalTokens.spacing.xs),
     ) {
         if (apps.isEmpty()) {
             stateItem { fill ->
