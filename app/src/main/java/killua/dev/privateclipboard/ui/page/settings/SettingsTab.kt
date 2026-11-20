@@ -9,6 +9,7 @@ import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.Wallpaper
+import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -133,5 +134,22 @@ class DynamicColorSettingEntry @Inject constructor(@ApplicationContext private v
         icon = Icons.Rounded.Wallpaper,
         accent = SettingsAccent.Tertiary,
         gate = Gate { Build.VERSION.SDK_INT >= Build.VERSION_CODES.S },
+    )
+}
+
+@SpiImpl
+class LogsSettingEntry @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val navigator: Navigator,
+) : SettingsEntry {
+    override val screen = SETTINGS_SCREEN
+    override val group: String = context.getString(R.string.settings_group_debug)
+    override val order = 100
+    override fun model() = SettingsItemModel.Navigation(
+        title = context.getString(R.string.settings_logs_title),
+        description = context.getString(R.string.settings_logs_description),
+        icon = Icons.Rounded.Terminal,
+        accent = SettingsAccent.Neutral,
+        onClick = { navigator.navigate(GeneratedRoutes.LOGS_SCREEN) },
     )
 }
